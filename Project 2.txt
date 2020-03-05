@@ -47,38 +47,38 @@ void num_substring(int t)
 //2, how to sum up the total number of substring from all threads
 
 
-        long tid = (long)t;
+        long tid = (long)t;                  //Assigning each thread its thread id to use in for loop later
         printf("id is %ld\n", tid);
         int i,j,k;
         int count;
 
 
-        for (i = ((n1/10) * tid); i < (n1/10); i++)
+        for (i = ((n1/10) * tid); i < (n1/10); i++)          //Divide the length of the string by number of threads. Multiply by the thread id which is 0-9
+                                                                //This allows each thread to start in different places. Each thread iterates string 1 length / number of threads
         {
                 count =0;
                 for(j = i, k = 0; k < n2; j++, k++)
                 {
                         if (*(s1 + j) != *(s2 + k))
- {
+                        {
                                 break;
                         }
                         else
-                        {
+                        {                                            //Use logic given in other file to count substrings. 
                                 count++;
                         }
                         if(count == n2)
                         {
-                                countArray[tid] = countArray[tid] + 1;
-                        }
+                                countArray[tid] = countArray[tid] + 1;         //Give each thread its own index in an array to update to                         }                                                      //prevent race condition. 
                 }
         }
 
-//      pthread_exit(NULL);
-        for(int i = 0; i <= 10; i++)
+        for(int i = 0; i < 10; i++)
         {
-        total = total + countArray[i];
+        total = total + countArray[i];                 //Finally add up the indecies in the array. 
         }
 }
+
 
 void *calSubStringThread(void *threadid){
     long tid = (long)threadid;
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 {
     pthread_t threads[NUM_THREADS];
     int t, rc;
-    int totalNum = total;
+    int totalNum;
 
 
         readf(fp);
@@ -103,14 +103,13 @@ int main(int argc, char *argv[])
             exit(-1);
         }
     }
-    
-     for(t=0; t<NUM_THREADS; t++){
+
+    for(t=0; t<NUM_THREADS; t++){
         pthread_join(threads[t], NULL);
     }
 
-        printf("The number of substrings is: %d\n", totalNum);
+        printf("The number of substrings is: %d\n", total);
 
         return 1;
 }
 
-                                                  
