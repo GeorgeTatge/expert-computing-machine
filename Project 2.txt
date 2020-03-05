@@ -12,6 +12,7 @@ FILE *fp;
 int countArray[NUM_THREADS]={0};
 int total;
 
+
 //read input file and generate string s1/s2 and length n1/n2
 int readf(FILE *fp)
 {
@@ -46,39 +47,39 @@ void num_substring(int t)
 //1, how to distribute different parts of string s1 into different threads
 //2, how to sum up the total number of substring from all threads
 
-
-        long tid = (long)t;                  //Assigning each thread its thread id to use in for loop later
-        printf("id is %ld\n", tid);
         int i,j,k;
         int count;
 
+        long tid = (long)t;
+        printf("id is %ld\n", tid);
 
-        for (i = ((n1/10) * tid); i < (n1/10); i++)          //Divide the length of the string by number of threads. Multiply by the thread id which is 0-9
-                                                                //This allows each thread to start in different places. Each thread iterates string 1 length / number of threads
+
+
+        for (i = ((n1/10) * tid); i < (n1/10); i++)
         {
                 count =0;
                 for(j = i, k = 0; k < n2; j++, k++)
-                {
+{
                         if (*(s1 + j) != *(s2 + k))
                         {
                                 break;
                         }
                         else
-                        {                                            //Use logic given in other file to count substrings. 
+                        {
                                 count++;
                         }
                         if(count == n2)
                         {
-                                countArray[tid] = countArray[tid] + 1;         //Give each thread its own index in an array to update to                         }                                                      //prevent race condition. 
+                                countArray[tid] = countArray[tid] + 1;
+                        }
                 }
         }
-
         for(int i = 0; i < 10; i++)
         {
-        total = total + countArray[i];                 //Finally add up the indecies in the array. 
+        total = total + countArray[i];
         }
-}
 
+}
 
 void *calSubStringThread(void *threadid){
     long tid = (long)threadid;
@@ -96,7 +97,10 @@ int main(int argc, char *argv[])
 
         readf(fp);
 
-        for(t=0; t<NUM_THREADS; t++){
+        rc = pthread_create(&threads[0], NULL, calSubStringThread, (void *) (size_t)t);
+        sleep(1);
+
+        for(t=1; t<NUM_THREADS; t++){
         rc = pthread_create(&threads[t], NULL, calSubStringThread, (void *) (size_t)t);
         if (rc){
             printf("ERROR; return code from pthread_create() is %d\n", rc);
@@ -109,7 +113,8 @@ int main(int argc, char *argv[])
     }
 
         printf("The number of substrings is: %d\n", total);
+        pthread_exit(NULL);
 
         return 1;
 }
-
+                                                  
