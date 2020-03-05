@@ -12,7 +12,6 @@ FILE *fp;
 int countArray[NUM_THREADS]={0};
 int total;
 
-
 //read input file and generate string s1/s2 and length n1/n2
 int readf(FILE *fp)
 {
@@ -52,16 +51,15 @@ void num_substring(int t)
         printf("id is %ld\n", tid);
         int i,j,k;
         int count;
-        int threadtotal[10];
 
 
         for (i = ((n1/10) * tid); i < (n1/10); i++)
         {
                 count =0;
                 for(j = i, k = 0; k < n2; j++, k++)
- {
+                {
                         if (*(s1 + j) != *(s2 + k))
-                        {
+ {
                                 break;
                         }
                         else
@@ -70,15 +68,15 @@ void num_substring(int t)
                         }
                         if(count == n2)
                         {
-                                threadtotal[tid] = threadtotal[tid] + 1;
+                                countArray[tid] = countArray[tid] + 1;
                         }
                 }
         }
-}
+
 //      pthread_exit(NULL);
         for(int i = 0; i <= 10; i++)
         {
-        total = total + threadtotal[i];
+        total = total + countArray[i];
         }
 }
 
@@ -105,13 +103,4 @@ int main(int argc, char *argv[])
             exit(-1);
         }
     }
-
-    for(t=0; t<NUM_THREADS; t++){
-        pthread_join(threads[t], NULL);
-    }
-
-        printf("The number of substrings is: %d\n", totalNum);
-
-        return 1;
-}
-
+                                                  
